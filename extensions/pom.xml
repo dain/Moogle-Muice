@@ -7,14 +7,9 @@
     <artifactId>guice-parent</artifactId>
     <version>2.0</version>
   </parent>
-  <artifactId>guice</artifactId>
-  <packaging>jar</packaging>
-  <!-- Note: this pom is for dependency management only.  It will not build the project -->
-  <dependencies>
-    <!-- CGLib is not listed because it has been repackaged with JarJar -->
-    <dependency>
-      <groupId>aopalliance</groupId>
-      <artifactId>aopalliance</artifactId>
-    </dependency>
-  </dependencies>
+  <groupId>com.google.inject.extension</groupId>
+  <artifactId>extension</artifactId>
+  <packaging>pom</packaging>
+  <name>Google Guice - Extensions</name>
+  <description>A collection of extensions to Guice</description>
 </project>
