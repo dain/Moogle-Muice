@@ -18,7 +18,7 @@
       <artifactId>guice</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.inject.integration</groupId>
+      <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-servlet</artifactId>
     </dependency>
     <dependency>
