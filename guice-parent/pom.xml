@@ -54,15 +54,17 @@
     <url>http://code.google.com/p/google-guice/source/browse/</url>
   </scm>
   <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-        <inherited>true</inherited>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+          <inherited>true</inherited>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>

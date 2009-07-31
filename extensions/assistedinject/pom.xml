@@ -3,11 +3,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.google.inject.extension</groupId>
-    <artifactId>extension</artifactId>
+    <groupId>com.google.inject.extensions</groupId>
+    <artifactId>extensions-parent</artifactId>
     <version>2.0</version>
   </parent>
-  <artifactId>assisted-inject</artifactId>
+  <artifactId>guice-assisted-inject</artifactId>
   <packaging>jar</packaging>
   <name>Google Guice - Extension: Assisted Inject</name>
   <description>An easier way to help the Guice Injector build objects</description>

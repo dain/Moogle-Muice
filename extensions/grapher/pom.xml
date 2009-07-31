@@ -3,11 +3,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.google.inject.extension</groupId>
-    <artifactId>extension</artifactId>
+    <groupId>com.google.inject.extensions</groupId>
+    <artifactId>extensions-parent</artifactId>
     <version>2.0</version>
   </parent>
-  <artifactId>grapher</artifactId>
+  <artifactId>guice-grapher</artifactId>
   <packaging>jar</packaging>
   <name>Google Guice - Extension: Grapher</name>
   <description>A tool to visualize Guice applications</description>

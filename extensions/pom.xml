@@ -7,9 +7,24 @@
     <artifactId>guice-parent</artifactId>
     <version>2.0</version>
   </parent>
-  <groupId>com.google.inject.extension</groupId>
-  <artifactId>extension</artifactId>
+  <groupId>com.google.inject.extensions</groupId>
+  <artifactId>extensions-parent</artifactId>
   <packaging>pom</packaging>
   <name>Google Guice - Extensions</name>
   <description>A collection of extensions to Guice</description>
+  <dependencyManagement>
+     <dependencies>
+       <dependency>
+         <groupId>com.google.inject.extensions</groupId>
+         <artifactId>guice-servlet</artifactId>
+         <version>${version}</version>
+       </dependency>
+       <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>servlet-api</artifactId>
+         <version>2.5</version>
+         <scope>provided</scope>
+       </dependency>
+     </dependencies>
+   </dependencyManagement>
 </project>
