@@ -23,7 +23,7 @@ import com.google.inject.spi.Dependency;
 import com.google.inject.spi.InjectionPoint;
 import junit.framework.TestCase;
 
-public class DependencyProviderTest extends TestCase {
+public class DependencyInjectionTest extends TestCase {
   private static final Key<DependencyHolder> dependencyHolderKey = Key.get(DependencyHolder.class);
 
 
