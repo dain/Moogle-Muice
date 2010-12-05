@@ -56,7 +56,7 @@ final class InternalContext {
     return dependencyStack.removeFirst();
   }
 
-  public Dependency<?> peekDependency()
+  public Dependency<?> getDependency()
   {
     return dependencyStack.getFirst();
   }
