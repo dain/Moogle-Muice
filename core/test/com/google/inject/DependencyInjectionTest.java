@@ -158,4 +158,46 @@ public class DependencyInjectionTest extends TestCase {
       return new DependencyHolder(dependency, true);
     }
   }
+  
+    public void testExampleUsage() {
+      DependencyInjectionTest.MyService myService = Guice.createInjector().getInstance(MyService.class);
+      assertNotNull(myService);
+      assertNotNull(myService.logger);
+      assertEquals(myService.logger.name, "MyService");
+    }
+
+    public static class MyService {
+      @Inject
+      MyLogger logger;
+    }
+
+    @ProvidedBy(MyLoggerProvider.class)
+    public static class MyLogger {
+      public final String name;
+
+      public MyLogger(String name) {
+        this.name = name;
+      }
+
+      public void log(String message) {
+        System.out.println(name + ": " + message);
+      }
+    }
+
+    public static class MyLoggerProvider implements Provider<MyLogger> {
+      private final Dependency<?> dependency;
+
+      @Inject
+      public MyLoggerProvider(Dependency<?> dependency) {
+        this.dependency = dependency;
+      }
+
+      public MyLogger get() {
+        InjectionPoint injectionPoint = dependency.getInjectionPoint();
+        if (injectionPoint == null) {
+          return new MyLogger("anonymous");
+        }
+        return new MyLogger(injectionPoint.getMember().getDeclaringClass().getSimpleName());
+      }
+    }
 }
