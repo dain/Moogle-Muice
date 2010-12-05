@@ -28,6 +28,8 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.Message;
 import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.DependencyListener;
+
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -40,6 +42,7 @@ final class EncounterImpl<T> implements TypeEncounter<T> {
   private final Lookups lookups;
   private List<MembersInjector<? super T>> membersInjectors; // lazy
   private List<InjectionListener<? super T>> injectionListeners; // lazy
+  private List<DependencyListener<? super T>> dependencyListeners; // lazy
   /*if[AOP]*/
   private List<MethodAspect> aspects; // lazy
   /*end[AOP]*/
@@ -86,6 +89,12 @@ final class EncounterImpl<T> implements TypeEncounter<T> {
         : ImmutableList.copyOf(injectionListeners);
   }
 
+  ImmutableList<DependencyListener<? super T>> getDependencyListeners() {
+    return dependencyListeners == null
+        ? ImmutableList.<DependencyListener<? super T>>of()
+        : ImmutableList.copyOf(dependencyListeners);
+  }
+
   public void register(MembersInjector<? super T> membersInjector) {
     checkState(valid, "Encounters may not be used after hear() returns.");
 
@@ -104,6 +113,16 @@ final class EncounterImpl<T> implements TypeEncounter<T> {
     }
 
     injectionListeners.add(injectionListener);
+  }
+
+  public void register(DependencyListener<T> dependencyListener) {
+    checkState(valid, "Encounters may not be used after hear() returns.");
+
+    if (dependencyListeners == null) {
+      dependencyListeners = Lists.newArrayList();
+    }
+
+    dependencyListeners.add(dependencyListener);
   }
 
   public void addError(String message, Object... arguments) {

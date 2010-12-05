@@ -36,6 +36,8 @@ import com.google.inject.spi.InjectionPoint;
 import com.google.inject.spi.Message;
 import com.google.inject.spi.TypeConverterBinding;
 import com.google.inject.spi.TypeListenerBinding;
+import com.google.inject.spi.DependencyListener;
+
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -335,6 +337,12 @@ public final class Errors implements Serializable {
   public Errors errorNotifyingInjectionListener(
       InjectionListener<?> listener, TypeLiteral<?> type, RuntimeException cause) {
     return errorInUserCode(cause, "Error notifying InjectionListener %s of %s.%n"
+        + " Reason: %s", listener, type, cause);
+  }
+
+  public Errors errorNotifyingDependencyListener(
+      DependencyListener<?> listener, TypeLiteral<?> type, RuntimeException cause) {
+    return errorInUserCode(cause, "Error notifying DependencyListener %s of %s.%n"
         + " Reason: %s", listener, type, cause);
   }
 

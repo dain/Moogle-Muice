@@ -100,6 +100,14 @@ public interface TypeEncounter<I> {
    */
   void register(InjectionListener<? super I> listener);
 
+  /**
+   * Registers an dependency listener for type {@code I}.  Guice will notify the listener
+   * during the inject member and after inject phases.
+   *
+   * @since 3.0
+   */
+  void register(DependencyListener<I> listener);
+
   /*if[AOP]*/
   /**
    * Binds method interceptor[s] to methods matched in type {@code I} and its supertypes. A

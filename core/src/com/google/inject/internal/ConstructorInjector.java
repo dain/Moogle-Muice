@@ -18,6 +18,8 @@ package com.google.inject.internal;
 
 import com.google.inject.internal.util.ImmutableSet;
 import com.google.inject.spi.InjectionPoint;
+import com.google.inject.spi.Dependency;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
@@ -92,7 +94,7 @@ final class ConstructorInjector<T> {
       constructionContext.setCurrentReference(t);
 
       membersInjector.injectMembers(t, errors, context, false);
-      membersInjector.notifyListeners(t, errors);
+      membersInjector.notifyListeners(t, errors, (Dependency<T>) context.getDependency());
 
       return t;
     } catch (InvocationTargetException userException) {

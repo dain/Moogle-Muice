@@ -22,6 +22,8 @@ import com.google.inject.internal.util.ImmutableList;
 import com.google.inject.internal.util.ImmutableSet;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.InjectionPoint;
+import com.google.inject.spi.DependencyListener;
+import com.google.inject.spi.Dependency;
 
 /**
  * Injects members of instances of a given type.
@@ -34,6 +36,7 @@ final class MembersInjectorImpl<T> implements MembersInjector<T> {
   private final ImmutableList<SingleMemberInjector> memberInjectors;
   private final ImmutableList<MembersInjector<? super T>> userMembersInjectors;
   private final ImmutableList<InjectionListener<? super T>> injectionListeners;
+  private final ImmutableList<DependencyListener<? super T>> dependencyListeners;
   /*if[AOP]*/
   private final ImmutableList<MethodAspect> addedAspects;
   /*end[AOP]*/
@@ -45,6 +48,7 @@ final class MembersInjectorImpl<T> implements MembersInjector<T> {
     this.memberInjectors = memberInjectors;
     this.userMembersInjectors = encounter.getMembersInjectors();
     this.injectionListeners = encounter.getInjectionListeners();
+    this.dependencyListeners = encounter.getDependencyListeners();
     /*if[AOP]*/
     this.addedAspects = encounter.getAspects();
     /*end[AOP]*/
@@ -73,30 +77,40 @@ final class MembersInjectorImpl<T> implements MembersInjector<T> {
     injector.callInContext(new ContextualCallable<Void>() {
       public Void call(InternalContext context) throws ErrorsException {
         injectMembers(instance, errors, context, toolableOnly);
+
+        // TODO: We *could* notify listeners too here,
+        // but it's not clear if we want to.  There's no way to know
+        // if a MembersInjector from the usersMemberInjector list wants
+        // toolable injections, so do we really want to notify
+        // about injection?  (We could take a strategy of only notifying
+        // if atleast one InjectionPoint was toolable, in which case
+        // the above callInContext could return 'true' if it injected
+        // anything.)
+        if(!toolableOnly) {
+          notifyListeners(instance, errors, context.getDependency());
+        }
+
         return null;
       }
     });
 
-    // TODO: We *could* notify listeners too here,
-    // but it's not clear if we want to.  There's no way to know
-    // if a MembersInjector from the usersMemberInjector list wants
-    // toolable injections, so do we really want to notify
-    // about injection?  (We could take a strategy of only notifying
-    // if atleast one InjectionPoint was toolable, in which case
-    // the above callInContext could return 'true' if it injected
-    // anything.)
-    if(!toolableOnly) {
-      notifyListeners(instance, errors);
-    }
   }
 
-  void notifyListeners(T instance, Errors errors) throws ErrorsException {
+  void notifyListeners(T instance, Errors errors, Dependency<T> dependency) throws ErrorsException {
     int numErrorsBefore = errors.size();
     for (InjectionListener<? super T> injectionListener : injectionListeners) {
       try {
         injectionListener.afterInjection(instance);
       } catch (RuntimeException e) {
         errors.errorNotifyingInjectionListener(injectionListener, typeLiteral, e);
+      }
+    }
+    for (DependencyListener<? super T> dependencyListener : dependencyListeners) {
+      try {
+        DependencyListener<T> listener = (DependencyListener<T>) dependencyListener;
+        listener.afterInjection(instance, dependency);
+      } catch (RuntimeException e) {
+        errors.errorNotifyingDependencyListener(dependencyListener, typeLiteral, e);
       }
     }
     errors.throwIfNewErrors(numErrorsBefore);
@@ -120,6 +134,15 @@ final class MembersInjectorImpl<T> implements MembersInjector<T> {
           userMembersInjector.injectMembers(t);
         } catch (RuntimeException e) {
           errors.errorInUserInjector(userMembersInjector, typeLiteral, e);
+        }
+      }
+      for (DependencyListener<? super T> dependencyListener : dependencyListeners) {
+        DependencyListener<T> listener = (DependencyListener<T>) dependencyListener;
+        try {
+          Dependency<T> dependency = (Dependency<T>) context.getDependency();
+          listener.injectMembers(t, dependency);
+        } catch (RuntimeException e) {
+          errors.errorNotifyingDependencyListener(listener, typeLiteral, e);
         }
       }
     }
