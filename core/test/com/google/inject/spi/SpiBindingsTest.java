@@ -426,7 +426,8 @@ public class SpiBindingsTest extends TestCase {
   }
 
   private final ImmutableSet<Key<?>> BUILT_IN_BINDINGS = ImmutableSet.of(
-      Key.get(Injector.class), Key.get(Stage.class), Key.get(Logger.class));
+      Key.get(Injector.class), Key.get(Stage.class), Key.get(Logger.class),
+      Key.get(Dependency.class), new Key<Dependency<?>>(){});
 
   private final Comparator<Binding<?>> orderByKey = new Comparator<Binding<?>>() {
     public int compare(Binding<?> a, Binding<?> b) {

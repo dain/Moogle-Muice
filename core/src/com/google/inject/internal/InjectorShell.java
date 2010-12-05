@@ -24,6 +24,7 @@ import com.google.inject.Provider;
 import static com.google.inject.Scopes.SINGLETON;
 import com.google.inject.Singleton;
 import com.google.inject.Stage;
+import com.google.inject.TypeLiteral;
 import com.google.inject.internal.InternalInjectorCreator.InjectorOptions;
 import com.google.inject.internal.util.ImmutableSet;
 import com.google.inject.internal.util.Lists;
@@ -158,6 +159,7 @@ final class InjectorShell {
       stopwatch.resetAndLog("Converters creation");
 
       bindInjector(injector);
+      bindDependency(injector);
       bindLogger(injector);
       bindingProcessor.process(injector, elements);
       stopwatch.resetAndLog("Binding creation");
@@ -215,6 +217,53 @@ final class InjectorShell {
 
     public String toString() {
       return "Provider<Injector>";
+    }
+  }
+
+  /**
+   * The Injector is a special case because we allow both parent and child
+   * injectors to both have a binding for that key.
+   */
+  private static void bindDependency(InjectorImpl injector) {
+    DependencyFactory dependencyFactory = new DependencyFactory();
+
+    // Bind raw type Dependency
+    Key<Dependency> rawKey = Key.get(Dependency.class);
+    injector.state.putBinding(rawKey,
+        new ProviderInstanceBindingImpl<Dependency>(injector, rawKey, SourceProvider.UNKNOWN_SOURCE,
+            dependencyFactory, Scoping.UNSCOPED, dependencyFactory,
+            ImmutableSet.<InjectionPoint>of()));
+
+    // Bind parameterized type Dependency<?>
+    Key<Dependency<?>> typedKey = Key.get(new TypeLiteral<Dependency<?>>(){});
+    injector.state.putBinding(typedKey,
+        new ProviderInstanceBindingImpl<Dependency<?>>(injector,
+            typedKey,
+            SourceProvider.UNKNOWN_SOURCE,
+            dependencyFactory,
+            Scoping.UNSCOPED,
+            dependencyFactory,
+            ImmutableSet.<InjectionPoint>of()));
+  }
+
+  private static class DependencyFactory implements InternalFactory<Dependency<?>>, Provider<Dependency<?>> {
+    public Dependency<?> get(Errors errors, InternalContext context, Dependency<?> dependency, boolean linked) {
+
+      // the passed in dependency is for injection of the Dependency class itself
+      // we want the parent of this dependency, so look up the dependency stack
+      List<Dependency<?>> dependencyStack = context.getDependencyStack();
+      if (dependencyStack.size() >= 2) {
+        return dependencyStack.get(1);
+      }
+      return null;
+    }
+
+    public Dependency<?> get() {
+      throw new UnsupportedOperationException();
+    }
+
+    public String toString() {
+      return "Provider<Dependency>";
     }
   }
 

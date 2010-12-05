@@ -40,6 +40,7 @@ import com.google.inject.internal.util.Lists;
 import com.google.inject.internal.util.Objects;
 import com.google.inject.internal.util.ToStringBuilder;
 import com.google.inject.spi.DefaultBindingTargetVisitor;
+import com.google.inject.spi.Dependency;
 
 /**
  * A visitor for testing the servlet SPI extension.
@@ -66,7 +67,7 @@ class ServletSpiVisitor
         HttpServletResponse.class, HttpSession.class, Map.class, HttpServlet.class);
     if(forInjector) {
       // only ignore these if this is for the live injector, any other time it'd be an error!
-      builder.add(Injector.class, Stage.class, Logger.class);
+      builder.add(Injector.class, Stage.class, Logger.class, Dependency.class);
     }
     this.allowedClasses = builder.build();
   }

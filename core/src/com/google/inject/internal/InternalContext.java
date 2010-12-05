@@ -16,9 +16,13 @@
 
 package com.google.inject.internal;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import com.google.inject.internal.util.ImmutableList;
 import com.google.inject.internal.util.Maps;
 import com.google.inject.spi.Dependency;
-import java.util.Map;
 
 /**
  * Internal context. Used to coordinate injections and support circular
@@ -29,7 +33,7 @@ import java.util.Map;
 final class InternalContext {
 
   private Map<Object, ConstructionContext<?>> constructionContexts = Maps.newHashMap();
-  private Dependency dependency;
+  private LinkedList<Dependency<?>> dependencyStack = new LinkedList<Dependency<?>>();
 
   @SuppressWarnings("unchecked")
   public <T> ConstructionContext<T> getConstructionContext(Object key) {
@@ -42,13 +46,22 @@ final class InternalContext {
     return constructionContext;
   }
 
-  public Dependency getDependency() {
-    return dependency;
+  public void pushDependency(Dependency<?> dependency)
+  {
+    dependencyStack.addFirst(dependency);
   }
 
-  public Dependency setDependency(Dependency dependency) {
-    Dependency previous = this.dependency;
-    this.dependency = dependency;
-    return previous;
+  public Dependency<?> popDependency()
+  {
+    return dependencyStack.removeFirst();
+  }
+
+  public Dependency<?> peekDependency()
+  {
+    return dependencyStack.getFirst();
+  }
+
+  public List<Dependency<?>> getDependencyStack() {
+    return ImmutableList.copyOf(dependencyStack);
   }
 }

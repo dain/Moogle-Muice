@@ -197,7 +197,7 @@ public class ExtensionSpiTest extends TestCase {
 
     private final Set<Class> allowedClasses = 
       ImmutableSet.<Class> of(
-        Injector.class, Stage.class, Logger.class,
+        Injector.class, Stage.class, Logger.class, Dependency.class,
         String.class, Integer.class);
     
     private int assistedBindingCount = 0;

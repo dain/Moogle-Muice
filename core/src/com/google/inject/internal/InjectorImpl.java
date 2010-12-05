@@ -944,11 +944,11 @@ final class InjectorImpl implements Injector, Lookups {
         try {
           T t = callInContext(new ContextualCallable<T>() {
             public T call(InternalContext context) throws ErrorsException {
-              Dependency previous = context.setDependency(dependency);
+              context.pushDependency(dependency);
               try {
                 return factory.get(errors, context, dependency, false);
               } finally {
-                context.setDependency(previous);
+                context.popDependency();
               }
             }
           });

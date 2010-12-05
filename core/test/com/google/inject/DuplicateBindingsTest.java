@@ -34,6 +34,7 @@ import junit.framework.TestCase;
 
 import com.google.inject.spi.Element;
 import com.google.inject.spi.Elements;
+import com.google.inject.spi.Dependency;
 import com.google.inject.util.Providers;
 
 /**
@@ -303,6 +304,8 @@ public class DuplicateBindingsTest extends TestCase {
     bindings.remove(Key.get(Injector.class));
     bindings.remove(Key.get(Logger.class));
     bindings.remove(Key.get(Stage.class));
+    bindings.remove(Key.get(Dependency.class));
+    bindings.remove(new Key<Dependency<?>>(){});
   }
   
   private static class ThrowingModule extends AbstractModule {

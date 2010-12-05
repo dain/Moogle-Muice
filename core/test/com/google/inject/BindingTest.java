@@ -25,6 +25,8 @@ import static com.google.inject.name.Names.named;
 import com.google.inject.spi.InjectionPoint;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+import com.google.inject.spi.Dependency;
+
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
@@ -397,7 +399,8 @@ public class BindingTest extends TestCase {
 
     Map<Key<?>,Binding<?>> bindings = injector.getAllBindings();
     assertEquals(ImmutableSet.of(Key.get(Injector.class), Key.get(Stage.class), Key.get(D.class),
-        Key.get(Logger.class), Key.get(Object.class), new Key<C<Stage>>() {}),
+        Key.get(Logger.class), Key.get(Object.class), new Key<C<Stage>>() {},
+        Key.get(Dependency.class), new Key<Dependency<?>>(){}),
         bindings.keySet());
 
     // add a JIT binding
@@ -405,12 +408,14 @@ public class BindingTest extends TestCase {
 
     Map<Key<?>,Binding<?>> bindings2 = injector.getAllBindings();
     assertEquals(ImmutableSet.of(Key.get(Injector.class), Key.get(Stage.class), Key.get(D.class),
-        Key.get(Logger.class), Key.get(Object.class), new Key<C<Stage>>() {}, Key.get(F.class)),
+        Key.get(Logger.class), Key.get(Object.class), new Key<C<Stage>>() {}, Key.get(F.class),
+        Key.get(Dependency.class), new Key<Dependency<?>>(){}),
         bindings2.keySet());
 
     // the original map shouldn't have changed
     assertEquals(ImmutableSet.of(Key.get(Injector.class), Key.get(Stage.class), Key.get(D.class),
-        Key.get(Logger.class), Key.get(Object.class), new Key<C<Stage>>() {}),
+        Key.get(Logger.class), Key.get(Object.class), new Key<C<Stage>>() {},
+        Key.get(Dependency.class), new Key<Dependency<?>>(){}),
         bindings.keySet());
 
     // check the bindings' values
