@@ -90,11 +90,17 @@ public class DependencyProviderTest extends TestCase {
     assertNull(dependency.getInjectionPoint());
   }
 
-  public void testGetDepencencyDirect() {
+
+  @Inject Dependency<?> dependency;
+
+  public void testGetDependencyDirect() {
     // With no dependencies on the stack the Dependency provider will return
     // null as expected
     assertNull(Guice.createInjector().getInstance(Dependency.class));
     assertNull(Guice.createInjector().getInstance(Key.get(new TypeLiteral<Dependency<?>>(){})));
+
+    Guice.createInjector().injectMembers(this);
+    assertNull(dependency);
   }
 
   public static class TargetObject {
